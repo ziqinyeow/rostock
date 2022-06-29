@@ -27,13 +27,16 @@ const BasicLayout = ({ meta, children }: Props) => {
           <meta content={meta.description} name="description" />
           <meta
             property="og:url"
-            content={`https://robond.vercel.app${router.asPath}`}
+            content={`https://rostock.vercel.app${router.asPath}`}
           />
           <link
             rel="canonical"
-            href={`https://robond.vercel.app/${router.asPath}`}
+            href={`https://rostock.vercel.app/${router.asPath}`}
           />
-          <meta property="og:site_name" content="Bond Prediction Application" />
+          <meta
+            property="og:site_name"
+            content="Stock Prediction Application"
+          />
           <meta property="og:description" content={meta.description} />
           <meta property="og:title" content={meta.title} />
           <meta property="og:image" content={meta.image} />

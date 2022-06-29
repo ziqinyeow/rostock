@@ -104,7 +104,7 @@ export default function TechnicalIndicatorKLineChart({ stock }) {
                 >
                   {stock?.map((type) => {
                     return (
-                      <option key={type} value={type}>
+                      <option key={type["STOCK NAME"]} value={type}>
                         {type["STOCK NAME"]}
                       </option>
                     );
