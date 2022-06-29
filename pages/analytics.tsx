@@ -6,9 +6,9 @@ import data from "@/data/dummy";
 import BasicLayout from "@/layouts/BasicLayout";
 
 const meta = {
-  title: "Robond - Analytics",
+  title: "Rostock - Analytics",
   description:
-    "This page display the TOP 100 bond predicted by our artificial intelligence machine learning model. Users can search the bond to identify the next month trend",
+    "This page display the TOP 100 stock predicted by our artificial intelligence machine learning model. Users can search the bond to identify the next month trend",
   image: "https://robond.vercel.app/static/Home.jpg",
 };
 

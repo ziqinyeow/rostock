@@ -7,7 +7,7 @@ import SchoolPride from "@/components/Firework";
 import data from "@/data/dummy";
 
 const meta = {
-  title: "Robond - Home",
+  title: "Rostock - Home",
   description:
     "A JAMstack application build with Next.js, Typescript and TailwindCSS. This application predicts and showcases stock price, stock return and others using the AI ML model. Home page display the TOP 5 stock based on volatility ratio",
   image: "https://robond.vercel.app/static/Home.jpg",
