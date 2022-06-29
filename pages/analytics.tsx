@@ -52,7 +52,11 @@ const Analytics: NextPage<Props> = ({ processedMonth, result }) => {
             className="relative w-full p-3 bg-white rounded-md dark:bg-gray-900 focus:outline-none focus:ring focus:ring-primary-100"
             type="text"
             placeholder="Search bond rating, stock code or stock name"
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+              // eslint-disable-next-line no-console
+              console.log(e.target.value);
+            }}
           />
         </div>
         <div className="flex justify-end w-full mb-10 text-gray-500">
