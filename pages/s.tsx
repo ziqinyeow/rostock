@@ -54,8 +54,6 @@ const Analytics: NextPage<Props> = ({ processedMonth, result }) => {
             placeholder="Search bond rating, stock code or stock name"
             onChange={(e) => {
               setSearchValue(e.target.value);
-              // eslint-disable-next-line no-console
-              console.log(e.target.value);
             }}
           />
         </div>
