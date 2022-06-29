@@ -6,7 +6,7 @@ const meta = {
   title: "Rostock - Predict",
   description:
     "Test our artificial intelligence model with machine learning model running at the background to serve you accurate result",
-  image: "https://robond.vercel.app/static/Home.jpg",
+  image: "https://rostock.vercel.app/static/Home.jpg",
 };
 
 interface Form {

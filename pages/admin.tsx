@@ -11,9 +11,9 @@ import { useEffect, useState } from "react";
 import BasicLayout from "@/layouts/BasicLayout";
 
 const meta = {
-  title: "Robond - Admin",
+  title: "Rostock - Admin",
   description: "Hello Admin, welcome to configuring the setup!!! Happy Hacking",
-  image: "https://robond.vercel.app/static/Home.jpg",
+  image: "https://rostock.vercel.app/static/Home.jpg",
 };
 
 const Admin: NextPage = ({

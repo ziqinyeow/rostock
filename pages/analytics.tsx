@@ -9,7 +9,7 @@ const meta = {
   title: "Rostock - Analytics",
   description:
     "This page display the TOP 100 stock predicted by our artificial intelligence machine learning model. Users can search the bond to identify the next month trend",
-  image: "https://robond.vercel.app/static/Home.jpg",
+  image: "https://rostock.vercel.app/static/Home.jpg",
 };
 
 interface Props {
