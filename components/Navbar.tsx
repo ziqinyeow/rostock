@@ -42,7 +42,7 @@ const Navbar = () => {
               )}
             </a>
           </NextLink>
-          <NextLink href="/analytics">
+          <NextLink href="/analytic">
             <a className="m-3">
               {mounted && (
                 <svg
@@ -50,7 +50,7 @@ const Navbar = () => {
                   width="24"
                   height="24"
                   className={
-                    router.pathname === "/analytics"
+                    router.pathname === "/analytic"
                       ? "text-primary-100 dark:text-primary-300"
                       : "text-gray-300 dark:text-gray-600"
                   }
