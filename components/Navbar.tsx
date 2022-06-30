@@ -16,7 +16,7 @@ const Navbar = () => {
         <div>
           <NextLink href="/">
             <a>
-              <h3 className="font-bold font-handwriting">Rostock</h3>
+              <h3 className="font-bold font-handwriting">JomStock</h3>
             </a>
           </NextLink>
         </div>
