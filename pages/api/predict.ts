@@ -6,26 +6,28 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== "POST") {
-    return res.status(400).json({ error: "invalid" });
+    return res.status(403).json({ error: "invalid" });
   }
   try {
+    // console.log(req.body);
+
     const data = await fetch(
-      "http://20.37.40.201:80/api/v1/service/myservice/score",
+      "https://id478jvvpg.execute-api.us-east-1.amazonaws.com/stock_prediction",
       {
         method: "POST",
         // @ts-ignore
         headers: {
           "Content-Type": "application/json",
-          // prettier-ignore
-          "Authorization": process.env.AUTHORIZATION_HEADER,
         },
-        body: req.body,
+        // @ts-ignore
+        body: JSON.stringify({ data: Object.values(JSON.parse(req.body)[0]) }),
       }
     );
+
     const result = await data.json();
 
-    return res.status(200).json({ result });
+    return res.status(200).json({ result, message: "ok" });
   } catch (error) {
-    return res.status(400).json({ error });
+    return res.status(400).json({ message: error });
   }
 }
