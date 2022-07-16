@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable react/sort-comp */
-/* eslint-disable react/button-has-type */
 // @ts-nocheck
 import React from "react";
 import ReactCanvasConfetti from "react-canvas-confetti";

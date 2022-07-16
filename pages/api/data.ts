@@ -1,5 +1,3 @@
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 import { BlobServiceClient } from "@azure/storage-blob";
 import { getThreeLatestAzureBlobFileName } from "lib/azure";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -64,7 +62,6 @@ export default async function handler(
 
     if (typeof returnType === "string") {
       if (returnType === "All") {
-        // eslint-disable-next-line @typescript-eslint/no-redeclare
         const result = data;
         return res.json({ month, result });
       }
@@ -116,7 +113,6 @@ export default async function handler(
       const bondReturnHistory = { bondReturnMonth, bondReturnValue };
 
       // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-redeclare
       const result = data.find((d) => d?.["STOCK CODE"] === returnType);
       return res.json({ month, result, bondPriceHistory, bondReturnHistory });
     }

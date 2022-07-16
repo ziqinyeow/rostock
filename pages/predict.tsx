@@ -61,7 +61,7 @@ const Robot: NextPage = () => {
       <div className="relative layout">
         <h3 className="font-bold">Predict</h3>
         <h4 className="mb-10">
-          your next month{" "}
+          your{" "}
           <span className="text-primary-100 dark:text-primary-300">
             stock price
           </span>
