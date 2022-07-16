@@ -1,202 +1,128 @@
-/* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
-import { BlobServiceClient } from "@azure/storage-blob";
+// @ts-nocheck
+import AWS from "aws-sdk";
 import { parse } from "papaparse";
-import { getThreeLatestAzureBlobFileName } from "./azure";
 
-async function streamToString(readableStream: any) {
-  return new Promise((resolve, reject) => {
-    const chunks: any[] = [];
-    readableStream.on("data", (data: any) => {
-      chunks.push(data.toString());
-    });
-    readableStream.on("end", () => {
-      resolve(chunks.join(""));
-    });
-    readableStream.on("error", reject);
-  });
-}
+const s3 = new AWS.S3({
+  region: "us-east-1",
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY_ID || "",
+    secretAccessKey: process.env.ECRET_ACCESS_KEY || "",
+  },
+});
 
-export const getBond = async (number: number) => {
-  const blobSasUrl = process.env.NEXT_PUBLIC_AZURE_BLOB_SAS_URL;
-  const containerName = process.env.AZURE_CONTAINER_NAME_FOR_READ;
-  // @ts-ignore
-  const blobServiceClient = new BlobServiceClient(blobSasUrl);
-  // @ts-ignore
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-  const latestData = await getThreeLatestAzureBlobFileName();
-
-  const blobClient1 = containerClient.getBlobClient(latestData[0]);
-  const blockBlobClient1 = blobClient1.getBlockBlobClient();
-
-  const month = latestData[0];
-
-  try {
-    const downloadBlockBlobResponse1 = await blockBlobClient1.download(0);
-    const text = await streamToString(
-      downloadBlockBlobResponse1.readableStreamBody
-    );
-
-    // @ts-ignore
-    const { data } = parse(text, { header: true });
-
-    const monthList = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "June",
-      "July",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    const processedMonth = `${
-      monthList[Number(month.slice(11, 13)) - 1]
-    }  ${month.slice(7, 11)}`;
-
-    const result = data.slice(0, number);
-
-    return { processedMonth, result };
-  } catch (error) {
-    return error;
-  }
+type Stock = {
+  Date: String;
+  Open: String;
+  High: String;
+  Low: String;
+  Close: String;
+  Volume: String;
+  Stock: String;
 };
 
-export const getBondByStockCode = async (stockCode: string) => {
-  const blobSasUrl = process.env.NEXT_PUBLIC_AZURE_BLOB_SAS_URL;
-  const containerName = process.env.AZURE_CONTAINER_NAME_FOR_READ;
-  // @ts-ignore
-  const blobServiceClient = new BlobServiceClient(blobSasUrl);
-  // @ts-ignore
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-  const latestData = await getThreeLatestAzureBlobFileName();
+const groupStock = (list, key) => {
+  return list.reduce((rv, x) => {
+    // eslint-disable-next-line no-param-reassign
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
 
-  const blobClient1 = containerClient.getBlobClient(latestData[0]);
-  const blockBlobClient1 = blobClient1.getBlockBlobClient();
-  const blobClient2 = containerClient.getBlobClient(latestData[1]);
-  const blockBlobClient2 = blobClient2.getBlockBlobClient();
-  const blobClient3 = containerClient.getBlobClient(latestData[2]);
-  const blockBlobClient3 = blobClient3.getBlockBlobClient();
+const _process = (stock: Stock[]) => {
+  // const day = [30, 60, 90];
+  const feature = Object.keys(stock[0]);
+  const group: Object = groupStock(stock, "Stock");
+  const stockName: [] = Object.keys(group);
 
-  const month = latestData[0];
+  const process = {};
+  for (let i = 0; i < stockName.length - 1; i += 1) {
+    if (!process[stockName[i]]) {
+      process[stockName[i]] = {
+        trend_30: 0, // 30 days trend = 30rd - 1st day
+        trend_60: 0,
+        trend_90: 0,
+        average_30: 0, // 30 days average
+        average_60: 0,
+        average_90: 0,
+        best_index_30: 0, // best stock price in 30 days
+        best_index_60: 0,
+        best_index_90: 0,
+        bad_index_30: 0, // bad stock price in 30 days
+        bad_index_60: 0,
+        bad_index_90: 0,
+      };
+      feature.forEach((p) => {
+        if (p === "Date") {
+          process[stockName[i]][p] = group[stockName[i]].map((g) => g?.[p]);
+        } else if (p === "Stock") {
+          // continue;
+        } else if (p === "Close" || p === "Predicted_Close") {
+          process[stockName[i]][p] = group[stockName[i]].map((g) =>
+            Number(g?.[p])
+          );
+          const price: Number[] = process[stockName[i]][p];
+          const price_30 = price.slice(0, 30);
+          const price_60 = price.slice(0, 60);
+          const price_90 = price;
+          process[stockName[i]]["trend_30"] =
+            price_30[price_30.length - 1] - price_30[0];
+          process[stockName[i]]["trend_60"] =
+            price_60[price_60.length - 1] - price_60[0];
+          process[stockName[i]]["trend_90"] =
+            price_90[price_90.length - 1] - price_90[0];
 
-  try {
-    const downloadBlockBlobResponse1 = await blockBlobClient1.download(0);
-    const text = await streamToString(
-      downloadBlockBlobResponse1.readableStreamBody
-    );
-    // @ts-ignore
-    const { data } = parse(text, { header: true });
+          process[stockName[i]]["average_30"] =
+            price_30.reduce((a, b) => a + b, 0) / price_30.length;
+          process[stockName[i]]["average_60"] =
+            price_60.reduce((a, b) => a + b, 0) / price_60.length;
+          process[stockName[i]]["average_90"] =
+            price_90.reduce((a, b) => a + b, 0) / price_90.length;
 
-    const monthList = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "June",
-      "July",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    const processedMonth = `${
-      monthList[Number(month.slice(11, 13)) - 1]
-    }  ${month.slice(7, 11)}`;
-    // @ts-ignore
-    const result = data.find((d) => d?.["STOCK CODE"] === stockCode);
-
-    const downloadBlockBlobResponse2 = await blockBlobClient2.download(0);
-    const allBondPriceHistoryText = await streamToString(
-      downloadBlockBlobResponse2.readableStreamBody
-    );
-    // @ts-ignore
-    const { data: allBondPriceHistory } = parse(allBondPriceHistoryText, {
-      header: true,
-    });
-    const bondPriceHistoryInJSON: any = allBondPriceHistory.find(
-      // @ts-ignore
-      (d) => d?.["STOCK CODE"] === stockCode
-    );
-
-    let bondPriceMonth = [];
-    let bondPriceValue = [];
-    for (const value in bondPriceHistoryInJSON) {
-      bondPriceMonth.push(value);
-      bondPriceValue.push(Number(bondPriceHistoryInJSON[value]));
+          process[stockName[i]]["best_index_30"] = price_30.indexOf(
+            Math.max(...price_30)
+          );
+          process[stockName[i]]["best_index_60"] = price_60.indexOf(
+            Math.max(...price_60)
+          );
+          process[stockName[i]]["best_index_90"] = price_90.indexOf(
+            Math.max(...price_90)
+          );
+          process[stockName[i]]["bad_index_30"] = price_30.indexOf(
+            Math.min(...price_30)
+          );
+          process[stockName[i]]["bad_index_60"] = price_60.indexOf(
+            Math.min(...price_60)
+          );
+          process[stockName[i]]["bad_index_90"] = price_90.indexOf(
+            Math.min(...price_90)
+          );
+        } else {
+          process[stockName[i]][p] = group[stockName[i]].map((g) =>
+            Number(g?.[p])
+          );
+        }
+      });
     }
-    bondPriceMonth = bondPriceMonth.slice(1);
-    bondPriceValue = bondPriceValue.slice(1);
-    const bondPriceHistory = { bondPriceMonth, bondPriceValue };
-
-    const downloadBlockBlobResponse3 = await blockBlobClient3.download(0);
-    const allBondReturnHistoryText = await streamToString(
-      downloadBlockBlobResponse3.readableStreamBody
-    );
-    // @ts-ignore
-    const { data: allBondReturnHistory } = parse(allBondReturnHistoryText, {
-      header: true,
-    });
-    const bondReturnHistoryInJSON: any = allBondReturnHistory.find(
-      // @ts-ignore
-      (d) => d?.["STOCK CODE"] === stockCode
-    );
-
-    let bondReturnMonth = [];
-    let bondReturnValue = [];
-    for (const value in bondReturnHistoryInJSON) {
-      bondReturnMonth.push(value);
-      bondReturnValue.push(Number(bondReturnHistoryInJSON[value]));
-    }
-    bondReturnMonth = bondReturnMonth.slice(1);
-    bondReturnValue = bondReturnValue.slice(1);
-    const bondReturnHistory = { bondReturnMonth, bondReturnValue };
-
-    return { processedMonth, result, bondPriceHistory, bondReturnHistory };
-  } catch (error) {
-    return error;
   }
+  return process;
 };
 
-export const getModelMetrics = async () => {
-  const blobSasUrl = process.env.NEXT_PUBLIC_AZURE_BLOB_SAS_URL;
-  const containerName = process.env.AZURE_CONTAINER_NAME_FOR_READ;
+const getStock = async (type: String) => {
+  const params = {
+    Bucket: "jomstockdata",
+    Key:
+      type === "ori"
+        ? `stock_toweb/ori/stock_ori.csv`
+        : `stock_toweb/output/stock_output.csv`,
+  };
+
+  const obj = await s3.getObject(params).promise();
+
   // @ts-ignore
-  const blobServiceClient = new BlobServiceClient(blobSasUrl);
-  // @ts-ignore
-  const containerClient = blobServiceClient.getContainerClient(containerName);
-
-  const blobClient = containerClient.getBlobClient("metrics/metrics.csv");
-  const blockBlobClient = blobClient.getBlockBlobClient();
-
-  try {
-    const downloadBlockBlobResponse1 = await blockBlobClient.download(0);
-    const text = await streamToString(
-      downloadBlockBlobResponse1.readableStreamBody
-    );
-
-    // @ts-ignore
-    const { data } = parse(text, { header: true });
-
-    const result = data[0];
-
-    // @ts-ignore
-    const meanAbs = result?.["Mean Absolute Error"];
-    // @ts-ignore
-    const meanSqr = result?.["Mean Squared Error"];
-    // @ts-ignore
-    const rootMeanSqr = result?.["Root Mean Squared Error"];
-
-    return { meanAbs, meanSqr, rootMeanSqr };
-  } catch (error) {
-    return error;
-  }
+  const text = obj.Body.toString("utf-8");
+  const { data: csv } = parse(text, { header: true });
+  const process = _process(csv);
+  return process;
 };
+
+export default getStock;

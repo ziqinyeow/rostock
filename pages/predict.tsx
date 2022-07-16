@@ -14,6 +14,10 @@ interface Form {
   LOW: number;
   OPEN: number;
   VOLUME: number;
+  EMA_30: number;
+  SMA_10: number;
+  MACD: number;
+  RSI: number;
 }
 
 const Robot: NextPage = () => {
@@ -132,6 +136,58 @@ const Robot: NextPage = () => {
               required
             />
           </div>
+          <div className="mb-10">
+            <h4 className="font-bold text-gray-600 dark:text-gray-300">
+              EMA 30
+            </h4>
+            <input
+              className="w-full p-3 mt-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700 dark:focus:ring-gray-500 dark:border-gray-700 dark:bg-gray-900"
+              type="number"
+              name="EMA_30"
+              step=".0001"
+              placeholder="Input a number"
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-10">
+            <h4 className="font-bold text-gray-600 dark:text-gray-300">
+              SMA 10
+            </h4>
+            <input
+              className="w-full p-3 mt-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700 dark:focus:ring-gray-500 dark:border-gray-700 dark:bg-gray-900"
+              type="number"
+              name="SMA_10"
+              step=".0001"
+              placeholder="Input a number"
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-10">
+            <h4 className="font-bold text-gray-600 dark:text-gray-300">MACD</h4>
+            <input
+              className="w-full p-3 mt-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700 dark:focus:ring-gray-500 dark:border-gray-700 dark:bg-gray-900"
+              type="number"
+              name="MACD"
+              step=".0001"
+              placeholder="Input a number"
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-10">
+            <h4 className="font-bold text-gray-600 dark:text-gray-300">RSI</h4>
+            <input
+              className="w-full p-3 mt-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700 dark:focus:ring-gray-500 dark:border-gray-700 dark:bg-gray-900"
+              type="number"
+              name="RSI"
+              step=".0001"
+              placeholder="Input a number"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
           <div className="w-full col-span-2">
             <button
@@ -147,7 +203,7 @@ const Robot: NextPage = () => {
             <div className="relative flex items-center justify-center p-20 text-center bg-black rounded-lg shadow-2xl text-gray-50 dark:bg-gray-50 dark:text-black">
               <h3>
                 {nextMonthStockPrice > 0
-                  ? `Next Month Bond Price: RM ${
+                  ? `Predicted Stock Price: RM ${
                       Math.round(
                         (Number(nextMonthStockPrice) + Number.EPSILON) * 10000
                       ) / 10000
