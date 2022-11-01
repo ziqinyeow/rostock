@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="flex">
         <div className="p-1 mx-2 rounded hover:bg-gray-100 dark:hover:bg-transparent">
           <a
-            href="https://github.com/ziqinyeow/finance-bond-prediction-app-v2"
+            href="https://github.com/ziqinyeow/rostock"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -31,7 +31,7 @@ const Footer = () => {
         </div>
         <div className="p-1 mx-2 rounded hover:bg-gray-100 dark:hover:bg-transparent">
           <a
-            href="https://github.com/chunfang2001/RobondAzure"
+            href="https://github.com/ziqinyeow/stock-price-prediction"
             target="_blank"
             rel="noopener noreferrer"
           >

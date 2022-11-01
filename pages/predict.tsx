@@ -191,6 +191,7 @@ const Robot: NextPage = () => {
 
           <div className="w-full col-span-2">
             <button
+              disabled
               className="w-full px-4 py-2 text-white border rounded-md dark:border-gray-700 bg-primary-100 hover:bg-primary-300 hover:text-black"
               type="submit"
             >

@@ -15,7 +15,7 @@ const Banner: React.FC = () => {
           <div className="tracking-wide nav">
             <div className="w-full text-center">
               <h4 className="text-gray-50 dark:text-gray-900">
-                Malaysia UMHackthon 2022
+                We won 2nd Place in Malaysia UM Hackthon 2022 - 
                 <strong> TEAM JOM</strong> Presented 🎉🥳🎈
               </h4>
             </div>

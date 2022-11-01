@@ -1,14 +1,16 @@
 // @ts-nocheck
-import AWS from "aws-sdk";
-import { parse } from "papaparse";
+// import AWS from "aws-sdk";
+// import { parse } from "papaparse";
 
-const s3 = new AWS.S3({
-  region: "us-east-1",
-  credentials: {
-    accessKeyId: process.env.ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
-  },
-});
+// const s3 = new AWS.S3({
+//   region: "us-east-1",
+//   credentials: {
+//     accessKeyId: process.env.ACCESS_KEY_ID || "",
+//     secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
+//   },
+// });
+import ori from "data/stock_ori.json"
+import out from "data/stock_output.json"
 
 type Stock = {
   Date: String;
@@ -107,21 +109,26 @@ const _process = (stock: Stock[]) => {
 };
 
 const getStock = async (type: String) => {
-  const params = {
-    Bucket: "jomstockdata",
-    Key:
-      type === "ori"
-        ? `stock_toweb/ori/stock_ori.csv`
-        : `stock_toweb/output/stock_output.csv`,
-  };
+  // const params = {
+  //   Bucket: "jomstockdata",
+  //   Key:
+  //     type === "ori"
+  //       ? `stock_toweb/ori/stock_ori.csv`
+  //       : `stock_toweb/output/stock_output.csv`,
+  // };
 
-  const obj = await s3.getObject(params).promise();
+  // const obj = await s3.getObject(params).promise();
 
-  // @ts-ignore
-  const text = obj.Body.toString("utf-8");
-  const { data: csv } = parse(text, { header: true });
-  const process = _process(csv);
-  return process;
+  // // @ts-ignore
+  // const text = obj.Body.toString("utf-8");
+  // const { data: csv } = parse(text, { header: true });
+
+  if (type === "ori") {
+    return _process(ori);
+    
+  } else {
+    return _process(out)
+  }
 };
 
 export default getStock;
